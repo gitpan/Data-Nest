@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 require Exporter;
 our @ISA = qw/Exporter/;
@@ -20,6 +20,7 @@ sub new {
         keys => [],
         rollups => [],
         tree => {},
+        noValues => $opt{noValues} || 0,
         delimiter => $opt{delimiter} || "_____",
     }, $class;
 }
@@ -87,6 +88,9 @@ sub _entries {
         if($depth + 1 >= scalar @{$self->{keys}}){
             foreach my $roll (@{$self->{rollups}}){
                 $obj->{$roll->{name}} = $roll->{func}(@$values);
+            }
+            if($self->{noValues}){
+                delete $obj->{$self->{valname}};
             }
         }
         push @$branch, $obj;
